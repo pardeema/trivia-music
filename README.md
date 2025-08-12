@@ -1,5 +1,7 @@
 # Music Rounds Creator
 
+**Current Version**: 1.1 (Latest)
+
 A desktop application for creating music rounds from YouTube links. Perfect for trivia hosts, music educators, and anyone who needs to create audio clips from specific timestamps in YouTube videos.
 
 ## Features
@@ -34,17 +36,39 @@ The application features a clean, modern interface with:
 
 Download the appropriate executable for your system:
 
-- **macOS**: `MusicRoundsCreator_macOS_YYYYMMDD_HHMMSS.zip`
-- **Windows**: `MusicRoundsCreator_Windows_YYYYMMDD_HHMMSS.zip`
+#### **Windows (Latest)**
+- **Download**: [MusicRoundsCreator_Windows_20250812_120053.zip](https://dev.107w.io/MusicRoundsCreator_Windows_20250812_120053.zip)
+- **MD5 Hash**: `8BB596366463BCFCFBFBC32E9338B132`
+- **Size**: 124MB
+
+#### **macOS (Latest)**
+- **Download**: [MusicRoundsCreator_macOS_20250812_111433.zip](https://dev.107w.io/MusicRoundsCreator_macOS_20250812_111433.zip)
+- **MD5 Hash**: `1812C3C6310E25F387ABD3DB65107327`
+- **Size**: 58MB
 
 **Installation Steps:**
-1. Download the ZIP file for your platform
+1. Download the ZIP file for your platform using the link above
 2. Extract the ZIP file to a folder of your choice
 3. Double-click the executable to run
 4. **macOS**: If blocked by security:
    - **Option 1**: Right-click the app and select "Open" from the context menu
    - **Option 2**: Go to System Preferences → Privacy & Security → Security section → Click "Open Anyway" next to MusicRoundsCreator
 5. **Windows**: If SmartScreen blocks it, click "More info" then "Run anyway"
+
+**File Integrity Verification:**
+To verify the downloaded file hasn't been corrupted, you can check the MD5 hash:
+
+**Windows:**
+```powershell
+Get-FileHash -Algorithm MD5 "MusicRoundsCreator_Windows_20250812_120053.zip"
+```
+
+**macOS/Linux:**
+```bash
+md5 MusicRoundsCreator_macOS_20250812_111433.zip
+```
+
+The hash should match the one listed above for your platform.
 
 **Requirements:**
 - **macOS**: macOS 10.14 (Mojave) or later
@@ -281,6 +305,13 @@ For issues and questions:
 - Ensure all prerequisites are installed
 
 ## Changelog
+
+### Version 1.1 (Latest)
+- **Fixed Windows PyQt6 DLL loading issues** - Switched to PyQt5 for better compatibility
+- **Improved font scaling** - Responsive fonts that scale properly with window resizing
+- **Enhanced platform compatibility** - macOS uses PyQt6, Windows uses PyQt5
+- **Better user experience** - Improved readability and responsive design
+- **Updated documentation** - Added developer notes and troubleshooting information
 
 ### Version 1.0
 - Initial release
