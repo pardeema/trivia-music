@@ -1,4 +1,6 @@
-PyQt6==6.6.1
+# PyQt6 for macOS, PyQt5 for Windows (for PyInstaller compatibility)
+PyQt6==6.6.1; sys_platform == "darwin"
+PyQt5==5.15.11; sys_platform == "win32"
 yt-dlp==2025.8.11
 pydub==0.25.1
 psutil==5.9.5

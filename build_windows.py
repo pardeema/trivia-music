@@ -81,15 +81,15 @@ def build_exe():
     
     # PyInstaller command for Windows
     cmd = [
-        'pyinstaller',
+        sys.executable, '-m', 'PyInstaller',
         '--onefile',
         '--windowed',
         '--name=MusicRoundsCreator',
         '--add-binary=ffmpeg.exe;.',  # Include FFmpeg binary
-        '--hidden-import=PyQt6',
-        '--hidden-import=PyQt6.QtCore',
-        '--hidden-import=PyQt6.QtGui',
-        '--hidden-import=PyQt6.QtWidgets',
+        '--hidden-import=PyQt5',
+        '--hidden-import=PyQt5.QtCore',
+        '--hidden-import=PyQt5.QtGui',
+        '--hidden-import=PyQt5.QtWidgets',
         '--hidden-import=yt_dlp',
         '--hidden-import=pydub',
         '--hidden-import=psutil',
@@ -97,11 +97,34 @@ def build_exe():
         '--hidden-import=requests',
         '--collect-all=yt_dlp',
         '--collect-all=pydub',
-        '--collect-all=PyQt6',
+        '--collect-all=PyQt5',
+        '--collect-all=PyQt5.QtCore',
+        '--collect-all=PyQt5.QtGui',
+        '--collect-all=PyQt5.QtWidgets',
+        '--collect-data=PyQt5',
         '--exclude-module=tkinter',  # Exclude unnecessary modules
         '--exclude-module=matplotlib',
         '--exclude-module=numpy',
         '--exclude-module=scipy',
+        '--exclude-module=PyQt6',  # Exclude PyQt6 to prevent conflicts
+        '--exclude-module=PyQt5.Qt3DCore',
+        '--exclude-module=PyQt5.Qt3DRender',
+        '--exclude-module=PyQt5.Qt3DAnimation',
+        '--exclude-module=PyQt5.Qt3DExtras',
+        '--exclude-module=PyQt5.QtQuick',
+        '--exclude-module=PyQt5.QtQuick3D',
+        '--exclude-module=PyQt5.QtQml',
+        '--exclude-module=PyQt5.QtWebEngine',
+        '--exclude-module=PyQt5.QtWebView',
+        '--exclude-module=PyQt5.QtBluetooth',
+        '--exclude-module=PyQt5.QtNfc',
+        '--exclude-module=PyQt5.QtPositioning',
+        '--exclude-module=PyQt5.QtSensors',
+        '--exclude-module=PyQt5.QtSerialPort',
+        '--exclude-module=PyQt5.QtSpatialAudio',
+        '--exclude-module=PyQt5.QtTextToSpeech',
+        '--exclude-module=PyQt5.QtWebChannel',
+        '--exclude-module=PyQt5.QtWebSockets',
         'main.py'
     ]
     

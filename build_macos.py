@@ -88,6 +88,9 @@ def build_app():
         '--name=MusicRoundsCreator',
         '--add-binary=ffmpeg:ffmpeg',  # Include FFmpeg binary
         '--hidden-import=PyQt6',
+        '--hidden-import=PyQt6.QtCore',
+        '--hidden-import=PyQt6.QtGui',
+        '--hidden-import=PyQt6.QtWidgets',
         '--hidden-import=yt_dlp',
         '--hidden-import=pydub',
         '--hidden-import=psutil',

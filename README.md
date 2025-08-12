@@ -140,6 +140,13 @@ python build_macos.py    # macOS only
 python build_windows.py  # Windows only
 ```
 
+**Important Notes for Developers:**
+
+- **macOS**: Uses PyQt6 for better compatibility with PyInstaller
+- **Windows**: Uses PyQt5 to avoid DLL loading issues with PyInstaller
+- **Dependencies**: The `requirements.txt` automatically installs the correct PyQt version for your platform
+- **FFmpeg**: Build scripts automatically download and include FFmpeg binaries
+
 This will create ZIP files with standalone executables that include all dependencies.
 
 ## Usage Guide

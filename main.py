@@ -18,15 +18,29 @@ from typing import List, Dict, Optional
 from urllib.parse import urlparse, parse_qs
 
 import yt_dlp
-from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QLabel, QLineEdit, QPushButton, QTextEdit, QProgressBar,
-    QFileDialog, QMessageBox, QGroupBox, QSpinBox, QCheckBox,
-    QSplitter, QFrame, QScrollArea, QGridLayout, QSizePolicy,
-    QInputDialog
-)
-from PyQt6.QtCore import Qt, QThread, pyqtSignal, QTimer
-from PyQt6.QtGui import QFont, QIcon, QPixmap
+import sys
+
+# Use PyQt6 on macOS, PyQt5 on Windows for compatibility
+if sys.platform == "darwin":  # macOS
+    from PyQt6.QtWidgets import (
+        QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+        QLabel, QLineEdit, QPushButton, QTextEdit, QProgressBar,
+        QFileDialog, QMessageBox, QGroupBox, QSpinBox, QCheckBox,
+        QSplitter, QFrame, QScrollArea, QGridLayout, QSizePolicy,
+        QInputDialog
+    )
+    from PyQt6.QtCore import Qt, QThread, pyqtSignal, QTimer
+    from PyQt6.QtGui import QFont, QIcon, QPixmap
+else:  # Windows and Linux
+    from PyQt5.QtWidgets import (
+        QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+        QLabel, QLineEdit, QPushButton, QTextEdit, QProgressBar,
+        QFileDialog, QMessageBox, QGroupBox, QSpinBox, QCheckBox,
+        QSplitter, QFrame, QScrollArea, QGridLayout, QSizePolicy,
+        QInputDialog
+    )
+    from PyQt5.QtCore import Qt, QThread, pyqtSignal, QTimer
+    from PyQt5.QtGui import QFont, QIcon, QPixmap
 import psutil
 
 
@@ -445,7 +459,7 @@ class MusicRoundsApp(QMainWindow):
         # Title
         title_label = QLabel("Music Rounds Creator")
         title_font = QFont()
-        title_font.setPointSize(18)
+        title_font.setPointSize(16)
         title_font.setBold(True)
         title_label.setFont(title_font)
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -453,7 +467,7 @@ class MusicRoundsApp(QMainWindow):
         
         subtitle_label = QLabel("Create audio rounds from YouTube links")
         subtitle_font = QFont()
-        subtitle_font.setPointSize(12)
+        subtitle_font.setPointSize(10)
         subtitle_label.setFont(subtitle_font)
         subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         subtitle_label.setStyleSheet("color: #aaa;")
@@ -495,7 +509,7 @@ class MusicRoundsApp(QMainWindow):
         # Help text
         help_label = QLabel("Enter a YouTube URL with a timestamp (e.g., &t=83) or paste a URL and we'll prompt for the start time.")
         help_label.setWordWrap(True)
-        help_label.setStyleSheet("color: #aaa; font-size: 11px; margin-bottom: 10px;")
+        help_label.setStyleSheet("color: #aaa; margin-bottom: 10px;")
         url_layout.addWidget(help_label)
         
         self.url_input = QLineEdit()
@@ -600,7 +614,7 @@ class MusicRoundsApp(QMainWindow):
             default_dir = str(Path.home() / "Desktop")
             
         self.output_dir_label = QLabel(default_dir)
-        self.output_dir_label.setStyleSheet("color: #aaa; font-style: italic;")
+        self.output_dir_label.setStyleSheet("color: #aaa; font-style: italic; padding: 2px;")
         dir_layout.addWidget(self.output_dir_label)
         
         self.browse_button = QPushButton("Browse...")
@@ -617,8 +631,7 @@ class MusicRoundsApp(QMainWindow):
                 background-color: #2b2b2b;
                 color: #e6e6e6;
                 border: 1px solid #555;
-                font-family: 'Courier New', monospace;
-                font-size: 11px;
+                font-family: 'Consolas', 'Courier New', monospace;
             }
         """)
         output_layout.addWidget(self.log_output)
@@ -896,26 +909,30 @@ def main():
     # Set application style
     app.setStyle('Fusion')
     
-    # Apply dark mode styling
+    # Apply dark mode styling with responsive fonts for Windows
     app.setStyleSheet("""
         QMainWindow {
             background-color: #2b2b2b;
             color: #e6e6e6;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
         }
         QWidget {
             background-color: #2b2b2b;
             color: #e6e6e6;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
         }
         QGroupBox {
             border: 1px solid #555;
             border-radius: 5px;
             margin-top: 1ex;
             font-weight: bold;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
         }
         QGroupBox::title {
             subcontrol-origin: margin;
             left: 10px;
             padding: 0 5px 0 5px;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
         }
         QLineEdit, QTextEdit, QSpinBox {
             background-color: #3b3b3b;
@@ -923,6 +940,7 @@ def main():
             border-radius: 3px;
             padding: 5px;
             color: #e6e6e6;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
         }
         QLineEdit:focus, QTextEdit:focus, QSpinBox:focus {
             border: 1px solid #0078d4;
@@ -934,6 +952,7 @@ def main():
             padding: 8px 16px;
             border-radius: 4px;
             font-weight: bold;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
         }
         QPushButton:hover {
             background-color: #106ebe;
@@ -947,12 +966,14 @@ def main():
         }
         QLabel {
             color: #e6e6e6;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
         }
         QProgressBar {
             border: 1px solid #555;
             border-radius: 3px;
             text-align: center;
             background-color: #3b3b3b;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
         }
         QProgressBar::chunk {
             background-color: #0078d4;
@@ -961,6 +982,7 @@ def main():
         QStatusBar {
             background-color: #2b2b2b;
             color: #e6e6e6;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
         }
     """)
     
