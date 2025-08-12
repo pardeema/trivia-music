@@ -28,9 +28,34 @@ The application features a clean, modern interface with:
 
 ## Installation
 
-### Prerequisites
+### Option 1: Standalone Executable (Recommended) 🎯
 
-#### 1. Install Python
+**For most users - no technical setup required!**
+
+Download the appropriate executable for your system:
+
+- **macOS**: `MusicRoundsCreator_macOS_YYYYMMDD_HHMMSS.zip`
+- **Windows**: `MusicRoundsCreator_Windows_YYYYMMDD_HHMMSS.zip`
+
+**Installation Steps:**
+1. Download the ZIP file for your platform
+2. Extract the ZIP file to a folder of your choice
+3. Double-click the executable to run
+4. **macOS**: If blocked, right-click and select "Open"
+5. **Windows**: If SmartScreen blocks it, click "More info" then "Run anyway"
+
+**Requirements:**
+- **macOS**: macOS 10.14 (Mojave) or later
+- **Windows**: Windows 10 or later
+- **No additional software required** - everything is bundled!
+
+### Option 2: Developer Installation
+
+For developers who want to modify the code or build their own executables.
+
+#### Prerequisites
+
+##### 1. Install Python
 
 **macOS:**
 ```bash
@@ -48,7 +73,7 @@ brew install python
 # Make sure to check "Add Python to PATH" during installation
 ```
 
-#### 2. Install FFmpeg
+##### 2. Install FFmpeg
 
 **macOS:**
 ```bash
@@ -68,9 +93,9 @@ choco install ffmpeg
 # Extract to C:\ffmpeg and add to PATH
 ```
 
-### Application Installation
+#### Application Installation
 
-#### Option 1: Clone and Run (Recommended)
+##### Option A: Clone and Run
 
 1. **Clone the repository:**
 ```bash
@@ -88,7 +113,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-#### Option 2: Download and Run
+##### Option B: Download and Run
 
 1. **Download the repository:**
    - Click the green "Code" button on GitHub
@@ -99,6 +124,21 @@ python main.py
    - Navigate to the extracted folder
    - Install dependencies: `pip install -r requirements.txt`
    - Run: `python main.py`
+
+#### Building Standalone Executables
+
+To create your own standalone executables:
+
+```bash
+# Build for current platform
+python build_all.py
+
+# Or build specifically for each platform
+python build_macos.py    # macOS only
+python build_windows.py  # Windows only
+```
+
+This will create ZIP files with standalone executables that include all dependencies.
 
 ## Usage Guide
 
