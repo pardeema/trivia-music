@@ -107,7 +107,6 @@ dmypy.json
 temp/
 output/
 uploads/
-*.zip
 *.mp3
 *.m4a
 *.webm
@@ -115,6 +114,9 @@ uploads/
 *.flac
 *.aac
 *.ogg
+
+# Distribution files (allow these)
+!MusicRoundsCreator_*.zip
 
 # FFmpeg
 ffmpeg.exe
