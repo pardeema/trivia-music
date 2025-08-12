@@ -298,7 +298,16 @@ This will create ZIP files with standalone executables that include all dependen
 
 ## License
 
-This project is open source. See LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+The MIT License is one of the most permissive open source licenses, allowing:
+- ✅ Commercial use
+- ✅ Modification
+- ✅ Distribution
+- ✅ Private use
+- ✅ No warranty requirements
+
+**Note**: This project uses FFmpeg (LGPL/GPL) and yt-dlp (Unlicense) as dependencies. The MIT license applies to this project's code, while the dependencies maintain their respective licenses.
 
 ## Support
 
