@@ -16,11 +16,14 @@ A desktop application for creating music rounds from YouTube links. Perfect for 
 - 📊 **Progress Tracking**: Real-time progress updates and detailed logging
 
 ## Screenshots
+1. Get your YT URL -- either at the top of the browser or share and get timestamp
+<img style="width: 50%;" alt="Copy YT URL with timestamp" src="https://github.com/user-attachments/assets/92a0560d-5464-4843-994d-65f773b6a26d" />
 
-The application features a clean, modern interface with:
-- **Left Panel**: URL input and numbered list of tracks to process
-- **Right Panel**: Output directory selection and detailed processing logs
-- **Bottom**: Process and Stop buttons with progress tracking
+2. In the app, paste the URL with the timestamp
+<img style="width: 50%;" alt="Add YT URL with Timestamp" src="https://github.com/user-attachments/assets/2cd59895-69c2-441c-b99f-bdd0ee7c4e22" />
+
+3. If you don't use the timestamp feature in the YT link you will be prompted to say where you want the audio clip to start
+<img style="width: 50%;" alt="Add YT URL without timestamp" src="https://github.com/user-attachments/assets/134145f0-331a-4e45-b363-f3d47ca8a64d" />
 
 ## System Requirements
 
