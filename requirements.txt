@@ -1,0 +1,5 @@
+PyQt6==6.6.1
+yt-dlp==2025.8.11
+pydub==0.25.1
+psutil==5.9.5
+requests==2.31.0
