@@ -41,7 +41,9 @@ Download the appropriate executable for your system:
 1. Download the ZIP file for your platform
 2. Extract the ZIP file to a folder of your choice
 3. Double-click the executable to run
-4. **macOS**: If blocked, right-click and select "Open"
+4. **macOS**: If blocked by security:
+   - **Option 1**: Right-click the app and select "Open" from the context menu
+   - **Option 2**: Go to System Preferences → Privacy & Security → Security section → Click "Open Anyway" next to MusicRoundsCreator
 5. **Windows**: If SmartScreen blocks it, click "More info" then "Run anyway"
 
 **Requirements:**
@@ -224,6 +226,12 @@ This will create ZIP files with standalone executables that include all dependen
 #### "Permission denied"
 - **macOS**: Check folder permissions
 - **Windows**: Run as administrator if needed
+
+#### "macOS Security Warning - App can't be opened"
+- **Solution**: macOS blocks unsigned apps by default
+- **Option 1**: Right-click the app → "Open" → "Open" in the dialog
+- **Option 2**: System Preferences → Privacy & Security → Security section → "Open Anyway"
+- **Why**: This happens because the app isn't code-signed by Apple (common for open-source apps)
 
 ### Performance Tips
 

@@ -129,7 +129,9 @@ def create_installer():
 Installation:
 1. Extract this ZIP file to a folder of your choice
 2. Double-click MusicRoundsCreator to run the application
-3. If macOS blocks the app, right-click and select "Open" from the context menu
+3. If macOS blocks the app:
+   - **Option 1**: Right-click and select "Open" from the context menu
+   - **Option 2**: Go to System Preferences → Privacy & Security → Security section → Click "Open Anyway" next to MusicRoundsCreator
 
 Requirements:
 - macOS 10.14 (Mojave) or later
