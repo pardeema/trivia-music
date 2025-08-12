@@ -125,8 +125,6 @@ ffmpeg.zip
 ffmpeg_temp/
 
 # Build artifacts
-build_macos.py
-build_windows.py
 *.app
 *.exe
 *.dmg
