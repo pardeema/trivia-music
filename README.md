@@ -6,7 +6,7 @@ A desktop application for creating music rounds from YouTube links. Perfect for 
 
 ## Features
 
-- 🎵 **15-Second Audio Clips**: Automatically downloads and clips 15-second segments from YouTube videos
+- 🎵 **Custom Duration Audio Clips**: Automatically downloads and clips 12-20 second segments from YouTube videos (default 15 seconds)
 - ⏰ **Timestamp Support**: Works with URLs containing timestamps (`t=83`) or prompts for manual entry
 - 📝 **Batch Processing**: Add multiple YouTube links and process them all at once
 - 🎯 **Smart URL Handling**: Converts `youtube.com` URLs to `youtu.be` format for better compatibility
@@ -189,6 +189,7 @@ This will create ZIP files with standalone executables that include all dependen
 2. Paste the URL in the input field
 3. Click "Add to List"
 4. The timestamp will be automatically detected and displayed
+5. Edit the clip duration (12-20 seconds) using the spinbox next to each link if needed
 
 #### Method 2: Manual Timestamp Entry
 1. Paste a YouTube URL without a timestamp:
@@ -201,6 +202,7 @@ This will create ZIP files with standalone executables that include all dependen
    - **Seconds only**: `83` (for 1:23)
    - **Minutes:Seconds**: `1:23`
    - **Hours:Minutes:Seconds**: `1:23:45`
+4. Edit the clip duration (12-20 seconds) using the spinbox next to each link if needed
 
 ### Processing Tracks
 
@@ -220,6 +222,8 @@ This will create ZIP files with standalone executables that include all dependen
 ### Track Management
 
 - **Numbered List**: Tracks are automatically numbered (1, 2, 3...) as you add them
+- **Individual Duration Control**: Each track has its own duration spinbox (12-20 seconds)
+- **Remove Individual Tracks**: Click the "×" button next to any track to remove it
 - **Clear All**: Use "Clear All" to remove all tracks and start over
 - **Processing Order**: Tracks are processed in the order they appear in the list
 
@@ -233,8 +237,8 @@ This will create ZIP files with standalone executables that include all dependen
 
 ### Output
 - **Audio Format**: MP3 (128kbps, 44.1kHz)
-- **Clip Duration**: 15 seconds per track
-- **File Size**: ~238KB per track (much smaller than full videos)
+- **Clip Duration**: 12-20 seconds per track (user configurable, default 15)
+- **File Size**: ~190-320KB per track (varies with duration, much smaller than full videos)
 - **Archive**: ZIP file containing all processed tracks
 
 ## Troubleshooting

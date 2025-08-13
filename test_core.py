@@ -100,8 +100,8 @@ class CoreDownloader:
                 
         raise Exception("All download strategies failed")
         
-    def create_audio_clip(self, input_file: str, start_time: int, output_dir: Path, index: int) -> Optional[str]:
-        """Create a 15-second audio clip starting from the specified time"""
+    def create_audio_clip(self, input_file: str, start_time: int, output_dir: Path, index: int, duration: int = 15) -> Optional[str]:
+        """Create a custom duration audio clip starting from the specified time"""
         output_file = output_dir / f"{index+1:02d}.mp3"
         
         try:
@@ -112,7 +112,7 @@ class CoreDownloader:
                 'ffmpeg', '-y',  # Overwrite output file
                 '-i', input_file,  # Input file
                 '-ss', str(start_time),  # Start time
-                '-t', '15',  # Duration (15 seconds)
+                '-t', str(duration),  # Duration (custom seconds)
                 '-c:a', 'mp3',  # Audio codec
                 '-b:a', '128k',  # Bitrate
                 '-ar', '44100',  # Sample rate
@@ -136,7 +136,7 @@ class CoreDownloader:
             
             # Convert start time from seconds to milliseconds
             start_ms = start_time * 1000
-            end_ms = start_ms + (15 * 1000)  # 15 seconds
+            end_ms = start_ms + (duration * 1000)  # Custom duration
             
             # Extract the clip
             clip = audio[start_ms:end_ms]
@@ -226,6 +226,7 @@ def test_core_functionality():
         {
             'url': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',  # Rick Astley
             'start_time': 30,  # Start at 30 seconds
+            'duration': 15,  # 15 second clip
             'title': 'Rick Astley - Never Gonna Give You Up'
         }
     ]
@@ -255,7 +256,8 @@ def test_core_functionality():
                 audio_file,
                 test_links[0]['start_time'],
                 output_dir,
-                0
+                0,
+                test_links[0]['duration']
             )
             
             if clip_file and os.path.exists(clip_file):

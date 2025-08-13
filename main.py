@@ -149,6 +149,7 @@ class DownloadWorker(QThread):
                     
                 url = link_data['url']
                 start_time_seconds = link_data['start_time']
+                duration = link_data.get('duration', 15)
                 title = link_data.get('title', f'Track {i+1}')
                 
                 # Skip if we've already processed this URL
@@ -164,7 +165,8 @@ class DownloadWorker(QThread):
                     self.progress.emit(f"Downloading audio for: {title}")
                     self.progress.emit(f"URL: {url}")
                     self.progress.emit(f"Start time: {start_time_seconds} seconds")
-                    result = self.download_youtube_audio(url, temp_dir, i, start_time_seconds)
+                    self.progress.emit(f"Duration: {duration} seconds")
+                    result = self.download_youtube_audio(url, temp_dir, i, start_time_seconds, duration)
                     if result:
                         audio_file, video_title = result
                         self.progress.emit(f"Downloaded to: {audio_file}")
@@ -220,7 +222,7 @@ class DownloadWorker(QThread):
     def stop(self):
         self.is_running = False
         
-    def download_youtube_audio(self, url: str, temp_dir: Path, index: int, start_time: int) -> Optional[tuple[str, str]]:
+    def download_youtube_audio(self, url: str, temp_dir: Path, index: int, start_time: int, duration: int = 15) -> Optional[tuple[str, str]]:
         """Download audio from YouTube URL starting from specific time"""
         output_path = temp_dir / f"temp_{index}"
         self.progress.emit(f"Download target path: {output_path}")
@@ -229,7 +231,7 @@ class DownloadWorker(QThread):
         has_url_timestamp = 't=' in url or 'time_continue=' in url
         
         # Always use explicit start time for consistent behavior
-        self.progress.emit(f"Using external downloader with start_time={start_time}s for 15-second clip")
+        self.progress.emit(f"Using external downloader with start_time={start_time}s for {duration}-second clip")
         strategies = [
             # Strategy 1: Use external downloader with explicit start time
             {
@@ -258,7 +260,7 @@ class DownloadWorker(QThread):
                 # Always use external downloader with explicit start time
                 'external_downloader': 'ffmpeg',
                 'external_downloader_args': {
-                    'ffmpeg': ['-ss', str(start_time), '-t', '15']
+                    'ffmpeg': ['-ss', str(start_time), '-t', str(duration)]
                 },
             }
         ]
@@ -318,11 +320,11 @@ class DownloadWorker(QThread):
                 
         raise Exception("All download strategies failed")
         
-    def create_audio_clip(self, input_file: str, start_time: int, output_dir: Path, index: int) -> Optional[str]:
-        """Create a 15-second audio clip starting from the specified time"""
+    def create_audio_clip(self, input_file: str, start_time: int, output_dir: Path, index: int, duration: int = 15) -> Optional[str]:
+        """Create a custom duration audio clip starting from the specified time"""
         output_file = output_dir / f"{index+1:02d}.mp3"
         self.progress.emit(f"Creating clip: {input_file} -> {output_file}")
-        self.progress.emit(f"Clip parameters: start={start_time}s, duration=15s, format=mp3")
+        self.progress.emit(f"Clip parameters: start={start_time}s, duration={duration}s, format=mp3")
         
         try:
             # Try direct FFmpeg first (more memory efficient)
@@ -332,7 +334,7 @@ class DownloadWorker(QThread):
                 'ffmpeg', '-y',  # Overwrite output file
                 '-i', input_file,  # Input file
                 '-ss', str(start_time),  # Start time
-                '-t', '15',  # Duration (15 seconds)
+                '-t', str(duration),  # Duration (custom seconds)
                 '-c:a', 'mp3',  # Audio codec
                 '-b:a', '128k',  # Bitrate
                 '-ar', '44100',  # Sample rate
@@ -453,36 +455,40 @@ class MusicRoundsApp(QMainWindow):
         
         # Main layout
         main_layout = QVBoxLayout(central_widget)
-        main_layout.setSpacing(10)
-        main_layout.setContentsMargins(20, 20, 20, 20)
+        main_layout.setSpacing(8)
+        main_layout.setContentsMargins(15, 10, 15, 15)
         
-        # Title
+        # Title (compact)
         title_label = QLabel("Music Rounds Creator")
         title_font = QFont()
-        title_font.setPointSize(16)
+        title_font.setPointSize(14)
         title_font.setBold(True)
         title_label.setFont(title_font)
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title_label.setStyleSheet("margin-bottom: 2px;")
         main_layout.addWidget(title_label)
         
         subtitle_label = QLabel("Create audio rounds from YouTube links")
         subtitle_font = QFont()
-        subtitle_font.setPointSize(10)
+        subtitle_font.setPointSize(9)
         subtitle_label.setFont(subtitle_font)
         subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        subtitle_label.setStyleSheet("color: #aaa;")
+        subtitle_label.setStyleSheet("color: #aaa; margin-bottom: 8px;")
         main_layout.addWidget(subtitle_label)
         
         # Create splitter for main content
         splitter = QSplitter(Qt.Orientation.Horizontal)
-        main_layout.addWidget(splitter)
+        splitter.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        main_layout.addWidget(splitter, 1)  # Add stretch factor 1
         
         # Left panel - Input
         left_panel = self.create_input_panel()
+        left_panel.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         splitter.addWidget(left_panel)
         
         # Right panel - Output
         right_panel = self.create_output_panel()
+        right_panel.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         splitter.addWidget(right_panel)
         
         # Set splitter proportions
@@ -501,15 +507,20 @@ class MusicRoundsApp(QMainWindow):
         """Create the input panel"""
         panel = QWidget()
         layout = QVBoxLayout(panel)
+        layout.setSpacing(8)
+        layout.setContentsMargins(5, 5, 5, 5)
         
         # YouTube URL input
         url_group = QGroupBox("YouTube URL")
+        url_group.setStyleSheet("QGroupBox { font-size: 11px; font-weight: bold; margin-top: 8px; }")
         url_layout = QVBoxLayout(url_group)
+        url_layout.setSpacing(6)
+        url_layout.setContentsMargins(8, 8, 8, 8)
         
-        # Help text
-        help_label = QLabel("Enter a YouTube URL with a timestamp (e.g., &t=83) or paste a URL and we'll prompt for the start time.")
+        # Help text (compact)
+        help_label = QLabel("Enter a YouTube URL with a timestamp (e.g., &t=83) or paste a URL and we'll prompt for the start time. You can edit the clip duration (12-20 seconds) for each link in the list below.")
         help_label.setWordWrap(True)
-        help_label.setStyleSheet("color: #aaa; margin-bottom: 10px;")
+        help_label.setStyleSheet("color: #aaa; font-size: 10px; margin-bottom: 6px;")
         url_layout.addWidget(help_label)
         
         self.url_input = QLineEdit()
@@ -525,12 +536,58 @@ class MusicRoundsApp(QMainWindow):
         
         # Links list
         links_group = QGroupBox("Links to Process")
+        links_group.setStyleSheet("QGroupBox { font-size: 11px; font-weight: bold; margin-top: 8px; }")
+        links_group.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         links_layout = QVBoxLayout(links_group)
+        links_layout.setSpacing(6)
+        links_layout.setContentsMargins(8, 8, 8, 8)
         
-        self.links_text = QTextEdit()
-        self.links_text.setPlaceholderText("Added links will appear here...")
-        self.links_text.setMaximumHeight(200)
-        links_layout.addWidget(self.links_text)
+        # Create a scroll area for the links list
+        self.links_scroll = QScrollArea()
+        self.links_scroll.setWidgetResizable(True)
+        self.links_scroll.setMinimumHeight(150)
+        self.links_scroll.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+        self.links_scroll.setStyleSheet("""
+            QScrollArea {
+                border: 1px solid #444;
+                border-radius: 4px;
+                background: #1e1e1e;
+            }
+            QScrollBar:vertical {
+                background: #2a2a2a;
+                width: 12px;
+                border-radius: 6px;
+            }
+            QScrollBar::handle:vertical {
+                background: #555;
+                border-radius: 6px;
+                min-height: 20px;
+            }
+            QScrollBar::handle:vertical:hover {
+                background: #666;
+            }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                height: 0px;
+            }
+        """)
+        
+        # Create a widget to hold the links
+        self.links_widget = QWidget()
+        self.links_layout = QVBoxLayout(self.links_widget)
+        self.links_layout.setSpacing(3)
+        self.links_layout.setContentsMargins(8, 8, 8, 8)
+        
+        # Add a placeholder label
+        self.links_placeholder = QLabel("Added links will appear here...")
+        self.links_placeholder.setStyleSheet("color: #666; font-style: italic; font-size: 11px;")
+        self.links_placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.links_layout.addWidget(self.links_placeholder)
+        
+        self.links_scroll.setWidget(self.links_widget)
+        links_layout.addWidget(self.links_scroll, 1)  # Add stretch factor 1
+        
+        # Store the link widgets
+        self.link_widgets = []
         
         # Clear button
         self.clear_button = QPushButton("Clear All")
@@ -548,10 +605,10 @@ class MusicRoundsApp(QMainWindow):
                 background-color: #28a745;
                 color: white;
                 border: none;
-                padding: 10px;
-                font-size: 14px;
+                padding: 8px;
+                font-size: 12px;
                 font-weight: bold;
-                border-radius: 5px;
+                border-radius: 4px;
             }
             QPushButton:hover {
                 background-color: #218838;
@@ -570,10 +627,10 @@ class MusicRoundsApp(QMainWindow):
                 background-color: #dc3545;
                 color: white;
                 border: none;
-                padding: 10px;
-                font-size: 14px;
+                padding: 8px;
+                font-size: 12px;
                 font-weight: bold;
-                border-radius: 5px;
+                border-radius: 4px;
             }
             QPushButton:hover {
                 background-color: #c82333;
@@ -589,17 +646,22 @@ class MusicRoundsApp(QMainWindow):
         
         layout.addLayout(button_layout)
         
-        layout.addStretch()
         return panel
         
     def create_output_panel(self) -> QWidget:
         """Create the output panel"""
         panel = QWidget()
         layout = QVBoxLayout(panel)
+        layout.setSpacing(8)
+        layout.setContentsMargins(5, 5, 5, 5)
         
         # Output group
         output_group = QGroupBox("Output")
+        output_group.setStyleSheet("QGroupBox { font-size: 11px; font-weight: bold; margin-top: 8px; }")
+        output_group.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         output_layout = QVBoxLayout(output_group)
+        output_layout.setSpacing(6)
+        output_layout.setContentsMargins(8, 8, 8, 8)
         
         # Output directory
         dir_layout = QHBoxLayout()
@@ -626,6 +688,7 @@ class MusicRoundsApp(QMainWindow):
         # Log output
         self.log_output = QTextEdit()
         self.log_output.setReadOnly(True)
+        self.log_output.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         self.log_output.setStyleSheet("""
             QTextEdit {
                 background-color: #2b2b2b;
@@ -634,7 +697,7 @@ class MusicRoundsApp(QMainWindow):
                 font-family: 'Consolas', 'Courier New', monospace;
             }
         """)
-        output_layout.addWidget(self.log_output)
+        output_layout.addWidget(self.log_output, 1)  # Add stretch factor 1
         
         layout.addWidget(output_group)
         
@@ -651,6 +714,9 @@ class MusicRoundsApp(QMainWindow):
         self.memory_timer.start(2000)  # Update every 2 seconds
         
         layout.addWidget(memory_group)
+        
+        # Add stretch to make the output panel expand
+        layout.addStretch(1)
         
         return panel
         
@@ -713,29 +779,163 @@ class MusicRoundsApp(QMainWindow):
         # Convert to minutes and seconds for display
         minutes = start_time // 60
         seconds = start_time % 60
-            
-        # Add to list with numbering
-        current_text = self.links_text.toPlainText()
         
-        # Count existing entries to determine the next number
-        existing_lines = [line for line in current_text.split('\n') if line.strip()]
-        next_number = len(existing_lines) + 1
-        
-        new_entry = f"{next_number}. {url} | {minutes:02d}:{seconds:02d}\n"
-        
-        if current_text:
-            self.links_text.setPlainText(current_text + new_entry)
-        else:
-            self.links_text.setPlainText(new_entry)
+        # Add link widget to the list
+        self.add_link_widget(url, start_time, 15)  # Default duration is 15 seconds
             
         # Clear inputs
         self.url_input.clear()
         
-        self.log_output.append(f"Added: {url} (start at {minutes:02d}:{seconds:02d})")
+        self.log_output.append(f"Added: {url} (start at {minutes:02d}:{seconds:02d}, duration: 15s)")
+        
+    def add_link_widget(self, url: str, start_time: int, duration: int):
+        """Add a link widget to the list"""
+        # Remove placeholder if this is the first link
+        if self.links_placeholder.isVisible():
+            self.links_placeholder.setVisible(False)
+        
+        # Create link widget
+        link_widget = QWidget()
+        link_layout = QHBoxLayout(link_widget)
+        link_layout.setContentsMargins(8, 4, 8, 4)
+        link_layout.setSpacing(8)
+        
+        # Number label
+        number_label = QLabel(f"{len(self.link_widgets) + 1}.")
+        number_label.setMinimumWidth(25)
+        number_label.setMaximumWidth(25)
+        number_label.setStyleSheet("font-weight: bold; color: #888; font-size: 11px;")
+        link_layout.addWidget(number_label)
+        
+        # URL and time info
+        minutes = start_time // 60
+        seconds = start_time % 60
+        info_label = QLabel(f"{url} | {minutes:02d}:{seconds:02d}")
+        info_label.setWordWrap(True)
+        info_label.setStyleSheet("color: #e0e0e0; font-size: 11px; background: transparent; border: none;")
+        link_layout.addWidget(info_label, 1)  # Stretch factor 1
+        
+        # Duration spinbox
+        duration_spinbox = QSpinBox()
+        duration_spinbox.setMinimum(12)
+        duration_spinbox.setMaximum(20)
+        duration_spinbox.setValue(duration)
+        duration_spinbox.setSuffix("s")
+        duration_spinbox.setFixedWidth(45)
+        duration_spinbox.setFixedHeight(20)
+        duration_spinbox.setStyleSheet("""
+            QSpinBox {
+                border: 1px solid #555;
+                border-radius: 2px;
+                padding: 1px 3px;
+                background: #2a2a2a;
+                color: #e0e0e0;
+                font-size: 10px;
+                selection-background-color: #0078d4;
+            }
+            QSpinBox::up-button, QSpinBox::down-button {
+                width: 12px;
+                border: none;
+                background: #3a3a3a;
+            }
+            QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+                background: #4a4a4a;
+            }
+            QSpinBox::up-arrow {
+                width: 6px;
+                height: 6px;
+                image: none;
+                border-left: 2px solid #888;
+                border-bottom: 2px solid #888;
+                transform: rotate(45deg);
+            }
+            QSpinBox::down-arrow {
+                width: 6px;
+                height: 6px;
+                image: none;
+                border-left: 2px solid #888;
+                border-top: 2px solid #888;
+                transform: rotate(45deg);
+            }
+        """)
+        link_layout.addWidget(duration_spinbox)
+        
+        # Remove button
+        remove_button = QPushButton("×")
+        remove_button.setFixedSize(16, 16)
+        remove_button.setStyleSheet("""
+            QPushButton {
+                background-color: #dc3545;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-weight: bold;
+                font-size: 10px;
+            }
+            QPushButton:hover {
+                background-color: #c82333;
+            }
+        """)
+        remove_button.clicked.connect(lambda: self.remove_link_widget(link_widget))
+        link_layout.addWidget(remove_button)
+        
+        # Style the link widget itself
+        link_widget.setStyleSheet("""
+            QWidget {
+                background: #252525;
+                border: 1px solid #333;
+                border-radius: 3px;
+                margin: 1px;
+            }
+        """)
+        
+        # Store the widget data
+        link_data = {
+            'widget': link_widget,
+            'url': url,
+            'start_time': start_time,
+            'duration_spinbox': duration_spinbox,
+            'number_label': number_label
+        }
+        
+        self.link_widgets.append(link_data)
+        self.links_layout.addWidget(link_widget)
+        
+        # Update numbering
+        self.update_link_numbers()
+        
+    def remove_link_widget(self, widget):
+        """Remove a link widget from the list"""
+        # Find and remove the widget data
+        for i, link_data in enumerate(self.link_widgets):
+            if link_data['widget'] == widget:
+                self.link_widgets.pop(i)
+                break
+        
+        # Remove the widget from the layout
+        self.links_layout.removeWidget(widget)
+        widget.deleteLater()
+        
+        # Update numbering
+        self.update_link_numbers()
+        
+        # Show placeholder if no links left
+        if not self.link_widgets:
+            self.links_placeholder.setVisible(True)
+            
+    def update_link_numbers(self):
+        """Update the numbering of all link widgets"""
+        for i, link_data in enumerate(self.link_widgets):
+            link_data['number_label'].setText(f"{i + 1}.")
         
     def clear_links(self):
         """Clear all links from the list"""
-        self.links_text.clear()
+        # Remove all link widgets
+        for link_data in self.link_widgets[:]:  # Copy the list to avoid modification during iteration
+            self.remove_link_widget(link_data['widget'])
+        
+        # Show placeholder
+        self.links_placeholder.setVisible(True)
         self.log_output.append("Cleared all links")
         
     def browse_output_dir(self):
@@ -748,44 +948,23 @@ class MusicRoundsApp(QMainWindow):
             
     def process_links(self):
         """Process all links in the list"""
-        links_text = self.links_text.toPlainText().strip()
-        if not links_text:
+        if not self.link_widgets:
             QMessageBox.warning(self, "Warning", "Please add some links to process")
             return
             
-        # Parse links
+        # Parse links from widgets
         links_data = []
-        for line in links_text.split('\n'):
-            if '|' in line:
-                # Handle numbered format: "1. url | time" or "url | time"
-                if line.strip().startswith(('1.', '2.', '3.', '4.', '5.', '6.', '7.', '8.', '9.')):
-                    # Remove numbering: "1. url | time" -> "url | time"
-                    parts = line.split('|', 1)
-                    if len(parts) == 2:
-                        numbered_url = parts[0].strip()
-                        time_str = parts[1].strip()
-                        # Remove the number and dot from the beginning
-                        url = numbered_url.split('.', 1)[1].strip() if '.' in numbered_url else numbered_url
-                    else:
-                        continue
-                else:
-                    # Old format without numbering
-                    url, time_str = line.split('|', 1)
-                    url = url.strip()
-                    time_str = time_str.strip()
-                
-                # Parse time
-                if ':' in time_str:
-                    minutes, seconds = map(int, time_str.split(':'))
-                    start_time = minutes * 60 + seconds
-                else:
-                    start_time = int(time_str)
-                    
-                links_data.append({
-                    'url': url,
-                    'start_time': start_time,
-                    'title': f'Track {len(links_data)+1}'
-                })
+        for i, link_data in enumerate(self.link_widgets):
+            url = link_data['url']
+            start_time = link_data['start_time']
+            duration = link_data['duration_spinbox'].value()
+            
+            links_data.append({
+                'url': url,
+                'start_time': start_time,
+                'duration': duration,
+                'title': f'Track {i+1}'
+            })
                 
         if not links_data:
             QMessageBox.warning(self, "Warning", "No valid links found")
@@ -813,7 +992,8 @@ class MusicRoundsApp(QMainWindow):
         
         # Log the links being processed
         for i, link_data in enumerate(links_data):
-            self.log_output.append(f"Link {i+1}: {link_data['url']} (start at {link_data['start_time']}s)")
+            duration = link_data.get('duration', 15)
+            self.log_output.append(f"Link {i+1}: {link_data['url']} (start at {link_data['start_time']}s, duration: {duration}s)")
             # Check if this is a manually entered timestamp
             if 't=' not in link_data['url'] and 'time_continue=' not in link_data['url']:
                 self.log_output.append(f"  -> This link has a manually entered timestamp")
