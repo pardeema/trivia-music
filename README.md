@@ -20,10 +20,17 @@ A desktop application for creating music rounds from YouTube links. Perfect for 
 <img style="width: 50%;" alt="Copy YT URL with timestamp" src="https://github.com/user-attachments/assets/92a0560d-5464-4843-994d-65f773b6a26d" />
 
 2. In the app, paste the URL with the timestamp
-<img style="width: 50%;" alt="Add YT URL with Timestamp" src="https://github.com/user-attachments/assets/2cd59895-69c2-441c-b99f-bdd0ee7c4e22" />
+<img style="width: 50%;" alt="Add YT URL with Timestamp" src="https://github.com/user-attachments/assets/71883b9d-42c2-4474-bc65-6a9827dd605a" />
 
 3. If you don't use the timestamp feature in the YT link you will be prompted to say where you want the audio clip to start
-<img style="width: 50%;" alt="Add YT URL without timestamp" src="https://github.com/user-attachments/assets/134145f0-331a-4e45-b363-f3d47ca8a64d" />
+<img style="width: 50%;" alt="Add YT URL without timestamp" src="https://github.com/user-attachments/assets/c1c56c83-a333-4d72-9685-07f6e37d815d" />
+
+4. You can edit the duration of the returned audio clip. The recommended default is 15seconds, but you can go between 12 and 20s.
+<img style="width: 50%;" alt="links-added-change-clip-length" src="https://github.com/user-attachments/assets/445d826a-21a1-4a6b-9360-23afff2cbd1c" />
+
+5. Once you run it, confirmation will pop up indicating success of where the zip file lives.
+<img style="width: 50%;" alt="rounds-downloaded" src="https://github.com/user-attachments/assets/a8b84ea8-6763-4fbb-835f-1b5efc47b3bd" />
+
 
 ## System Requirements
 
