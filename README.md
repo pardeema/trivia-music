@@ -40,9 +40,9 @@ A desktop application for creating music rounds from YouTube links. Perfect for 
 Download the appropriate executable for your system:
 
 #### **Windows (Latest)**
-- **Download**: [MusicRoundsCreator_Windows_20250812_120053.zip](https://dev.107w.io/MusicRoundsCreator_Windows_20250812_120053.zip)
-- **MD5 Hash**: `8BB596366463BCFCFBFBC32E9338B132`
-- **Size**: 124MB
+- **Download**: [MusicRoundsCreator_Windows_20250813_094944.zip](https://dev.107w.io/MusicRoundsCreator_Windows_20250813_094944.zip)
+- **MD5 Hash**: `5BE4701FE57FFE58B03111EC6365AA89`
+- **Size**: 129MB
 
 #### **macOS (Latest)**
 - **Download**: [MusicRoundsCreator_macOS_20250812_222817.zip](https://dev.107w.io/MusicRoundsCreator_macOS_20250812_222817.zip)
