@@ -466,7 +466,12 @@ class MusicRoundsApp(QMainWindow):
     def init_ui(self):
         """Initialize the user interface"""
         self.setWindowTitle("Music Rounds Creator")
-        self.setGeometry(100, 100, 800, 600)
+        
+        # Windows-specific window sizing
+        if sys.platform == "win32":
+            self.setGeometry(100, 100, 1000, 800)  # Even larger window for Windows
+        else:
+            self.setGeometry(100, 100, 800, 600)
         
         # Set application icon (if available)
         try:
@@ -478,10 +483,14 @@ class MusicRoundsApp(QMainWindow):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         
-        # Main layout
+        # Main layout with Windows-specific adjustments
         main_layout = QVBoxLayout(central_widget)
-        main_layout.setSpacing(8)
-        main_layout.setContentsMargins(15, 10, 15, 15)
+        if sys.platform == "win32":
+            main_layout.setSpacing(12)  # More spacing for Windows
+            main_layout.setContentsMargins(20, 15, 20, 20)  # More margins for Windows
+        else:
+            main_layout.setSpacing(8)
+            main_layout.setContentsMargins(15, 10, 15, 15)
         
         # Title (compact)
         title_label = QLabel("Music Rounds Creator")
@@ -522,12 +531,19 @@ class MusicRoundsApp(QMainWindow):
         # Font size control panel
         font_control_panel = QWidget()
         font_control_layout = QHBoxLayout(font_control_panel)
-        font_control_layout.setContentsMargins(15, 5, 15, 5)
-        font_control_layout.setSpacing(10)
+        if sys.platform == "win32":
+            font_control_layout.setContentsMargins(20, 8, 20, 8)  # More padding for Windows
+            font_control_layout.setSpacing(12)  # More spacing for Windows
+        else:
+            font_control_layout.setContentsMargins(15, 5, 15, 5)
+            font_control_layout.setSpacing(10)
         
         # Font size label
         font_label = QLabel("Font Size:")
-        font_label.setStyleSheet(f"font-size: {self.current_font_size}pt; color: #e6e6e6;")
+        if sys.platform == "win32":
+            font_label.setStyleSheet(f"font-size: {self.current_font_size}pt; color: #e6e6e6; padding: 4px;")
+        else:
+            font_label.setStyleSheet(f"font-size: {self.current_font_size}pt; color: #e6e6e6;")
         font_control_layout.addWidget(font_label)
         
         # Font size slider
@@ -536,26 +552,51 @@ class MusicRoundsApp(QMainWindow):
         self.font_size_slider.setMaximum(20)
         self.font_size_slider.setValue(self.current_font_size)  # Use instance variable
         self.font_size_slider.setSuffix("pt")
-        self.font_size_slider.setFixedWidth(80)
-        self.font_size_slider.setStyleSheet("""
-            QSpinBox {
-                border: 1px solid #555;
-                border-radius: 3px;
-                padding: 3px 6px;
-                background: #3b3b3b;
-                color: #e6e6e6;
-                font-size: 11px;
-                selection-background-color: #0078d4;
-            }
-            QSpinBox::up-button, QSpinBox::down-button {
-                width: 16px;
-                border: none;
-                background: #4a4a4a;
-            }
-            QSpinBox::up-button:hover, QSpinBox::down-button:hover {
-                background: #5a5a5a;
-            }
-        """)
+        if sys.platform == "win32":
+            self.font_size_slider.setFixedWidth(100)  # Wider for Windows
+            self.font_size_slider.setFixedHeight(25)  # Taller for Windows
+        else:
+            self.font_size_slider.setFixedWidth(80)
+        if sys.platform == "win32":
+            self.font_size_slider.setStyleSheet("""
+                QSpinBox {
+                    border: 1px solid #555;
+                    border-radius: 3px;
+                    padding: 4px 8px;
+                    background: #3b3b3b;
+                    color: #e6e6e6;
+                    font-size: 11px;
+                    selection-background-color: #0078d4;
+                }
+                QSpinBox::up-button, QSpinBox::down-button {
+                    width: 18px;
+                    border: none;
+                    background: #4a4a4a;
+                }
+                QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+                    background: #5a5a5a;
+                }
+            """)
+        else:
+            self.font_size_slider.setStyleSheet("""
+                QSpinBox {
+                    border: 1px solid #555;
+                    border-radius: 3px;
+                    padding: 3px 6px;
+                    background: #3b3b3b;
+                    color: #e6e6e6;
+                    font-size: 11px;
+                    selection-background-color: #0078d4;
+                }
+                QSpinBox::up-button, QSpinBox::down-button {
+                    width: 16px;
+                    border: none;
+                    background: #4a4a4a;
+                }
+                QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+                    background: #5a5a5a;
+                }
+            """)
         self.font_size_slider.valueChanged.connect(self.change_font_size)
         font_control_layout.addWidget(self.font_size_slider)
         
@@ -578,20 +619,33 @@ class MusicRoundsApp(QMainWindow):
         """Create the input panel"""
         panel = QWidget()
         layout = QVBoxLayout(panel)
-        layout.setSpacing(8)
-        layout.setContentsMargins(5, 5, 5, 5)
+        if sys.platform == "win32":
+            layout.setSpacing(12)  # More spacing for Windows
+            layout.setContentsMargins(8, 8, 8, 8)  # More margins for Windows
+        else:
+            layout.setSpacing(8)
+            layout.setContentsMargins(5, 5, 5, 5)
         
         # YouTube URL input
         url_group = QGroupBox("YouTube URL")
-        url_group.setStyleSheet(f"QGroupBox {{ font-size: {self.current_font_size}pt; font-weight: bold; margin-top: 8px; }}")
-        url_layout = QVBoxLayout(url_group)
-        url_layout.setSpacing(6)
-        url_layout.setContentsMargins(8, 8, 8, 8)
+        if sys.platform == "win32":
+            url_group.setStyleSheet(f"QGroupBox {{ font-size: {self.current_font_size}pt; font-weight: bold; margin-top: 12px; padding-top: 8px; }}")
+            url_layout = QVBoxLayout(url_group)
+            url_layout.setSpacing(8)
+            url_layout.setContentsMargins(12, 12, 12, 12)
+        else:
+            url_group.setStyleSheet(f"QGroupBox {{ font-size: {self.current_font_size}pt; font-weight: bold; margin-top: 8px; }}")
+            url_layout = QVBoxLayout(url_group)
+            url_layout.setSpacing(6)
+            url_layout.setContentsMargins(8, 8, 8, 8)
         
         # Help text (compact)
         help_label = QLabel("Enter a YouTube URL with a timestamp (e.g., &t=83) or paste a URL and we'll prompt for the start time. You can edit the clip duration (12-20 seconds) for each link in the list below.")
         help_label.setWordWrap(True)
-        help_label.setStyleSheet(f"color: #aaa; font-size: {self.current_font_size}pt; margin-bottom: 6px;")
+        if sys.platform == "win32":
+            help_label.setStyleSheet(f"color: #aaa; font-size: {self.current_font_size}pt; margin-bottom: 8px; padding: 4px; line-height: 1.3;")
+        else:
+            help_label.setStyleSheet(f"color: #aaa; font-size: {self.current_font_size}pt; margin-bottom: 6px;")
         url_layout.addWidget(help_label)
         
         self.url_input = QLineEdit()
@@ -607,16 +661,26 @@ class MusicRoundsApp(QMainWindow):
         
         # Links list
         links_group = QGroupBox("Links to Process")
-        links_group.setStyleSheet(f"QGroupBox {{ font-size: {self.current_font_size}pt; font-weight: bold; margin-top: 8px; }}")
-        links_group.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
-        links_layout = QVBoxLayout(links_group)
-        links_layout.setSpacing(6)
-        links_layout.setContentsMargins(8, 8, 8, 8)
+        if sys.platform == "win32":
+            links_group.setStyleSheet(f"QGroupBox {{ font-size: {self.current_font_size}pt; font-weight: bold; margin-top: 12px; padding-top: 8px; }}")
+            links_group.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+            links_layout = QVBoxLayout(links_group)
+            links_layout.setSpacing(8)
+            links_layout.setContentsMargins(12, 12, 12, 12)
+        else:
+            links_group.setStyleSheet(f"QGroupBox {{ font-size: {self.current_font_size}pt; font-weight: bold; margin-top: 8px; }}")
+            links_group.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+            links_layout = QVBoxLayout(links_group)
+            links_layout.setSpacing(6)
+            links_layout.setContentsMargins(8, 8, 8, 8)
         
         # Create a scroll area for the links list
         self.links_scroll = QScrollArea()
         self.links_scroll.setWidgetResizable(True)
-        self.links_scroll.setMinimumHeight(150)
+        if sys.platform == "win32":
+            self.links_scroll.setMinimumHeight(180)  # Taller for Windows
+        else:
+            self.links_scroll.setMinimumHeight(150)
         self.links_scroll.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         self.links_scroll.setStyleSheet("""
             QScrollArea {
@@ -645,12 +709,19 @@ class MusicRoundsApp(QMainWindow):
         # Create a widget to hold the links
         self.links_widget = QWidget()
         self.links_layout = QVBoxLayout(self.links_widget)
-        self.links_layout.setSpacing(3)
-        self.links_layout.setContentsMargins(8, 8, 8, 8)
+        if sys.platform == "win32":
+            self.links_layout.setSpacing(4)
+            self.links_layout.setContentsMargins(10, 10, 10, 10)
+        else:
+            self.links_layout.setSpacing(3)
+            self.links_layout.setContentsMargins(8, 8, 8, 8)
         
         # Add a placeholder label
         self.links_placeholder = QLabel("Added links will appear here...")
-        self.links_placeholder.setStyleSheet(f"color: #666; font-style: italic; font-size: {self.current_font_size}pt;")
+        if sys.platform == "win32":
+            self.links_placeholder.setStyleSheet(f"color: #666; font-style: italic; font-size: {self.current_font_size}pt; padding: 10px;")
+        else:
+            self.links_placeholder.setStyleSheet(f"color: #666; font-style: italic; font-size: {self.current_font_size}pt;")
         self.links_placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.links_layout.addWidget(self.links_placeholder)
         
@@ -669,48 +740,92 @@ class MusicRoundsApp(QMainWindow):
         
         # Process and Stop buttons
         button_layout = QHBoxLayout()
+        if sys.platform == "win32":
+            button_layout.setSpacing(12)  # More spacing between buttons for Windows
+        else:
+            button_layout.setSpacing(8)
         
         self.process_button = QPushButton("Create Music Round")
-        self.process_button.setStyleSheet(f"""
-            QPushButton {{
-                background-color: #28a745;
-                color: white;
-                border: none;
-                padding: 8px;
-                font-size: {self.current_font_size}pt;
-                font-weight: bold;
-                border-radius: 4px;
-            }}
-            QPushButton:hover {{
-                background-color: #218838;
-            }}
-            QPushButton:disabled {{
-                background-color: #555;
-                color: #888;
-            }}
-        """)
+        if sys.platform == "win32":
+            self.process_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #28a745;
+                    color: white;
+                    border: none;
+                    padding: 10px 16px;
+                    font-size: {self.current_font_size}pt;
+                    font-weight: bold;
+                    border-radius: 4px;
+                }}
+                QPushButton:hover {{
+                    background-color: #218838;
+                }}
+                QPushButton:disabled {{
+                    background-color: #555;
+                    color: #888;
+                }}
+            """)
+        else:
+            self.process_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #28a745;
+                    color: white;
+                    border: none;
+                    padding: 8px;
+                    font-size: {self.current_font_size}pt;
+                    font-weight: bold;
+                    border-radius: 4px;
+                }}
+                QPushButton:hover {{
+                    background-color: #218838;
+                }}
+                QPushButton:disabled {{
+                    background-color: #555;
+                    color: #888;
+                }}
+            """)
         self.process_button.clicked.connect(self.process_links)
         button_layout.addWidget(self.process_button)
         
         self.stop_button = QPushButton("Stop Processing")
-        self.stop_button.setStyleSheet(f"""
-            QPushButton {{
-                background-color: #dc3545;
-                color: white;
-                border: none;
-                padding: 8px;
-                font-size: {self.current_font_size}pt;
-                font-weight: bold;
-                border-radius: 4px;
-            }}
-            QPushButton:hover {{
-                background-color: #c82333;
-            }}
-            QPushButton:disabled {{
-                background-color: #555;
-                color: #888;
-            }}
-        """)
+        if sys.platform == "win32":
+            self.stop_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #dc3545;
+                    color: white;
+                    border: none;
+                    padding: 10px 16px;
+                    font-size: {self.current_font_size}pt;
+                    font-weight: bold;
+                    border-radius: 4px;
+                }}
+                QPushButton:hover {{
+                    background-color: #c82333;
+                }}
+                QPushButton:disabled {{
+                    background-color: #555;
+                    color: #888;
+                }}
+            """)
+        else:
+            self.stop_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #dc3545;
+                    color: white;
+                    border: none;
+                    padding: 8px;
+                    font-size: {self.current_font_size}pt;
+                    font-weight: bold;
+                    border-radius: 4px;
+                }}
+                QPushButton:hover {{
+                    background-color: #c82333;
+                }}
+                QPushButton:disabled {{
+                    background-color: #555;
+                    color: #888;
+                }}
+            """)
         self.stop_button.clicked.connect(self.stop_processing)
         self.stop_button.setEnabled(False)
         button_layout.addWidget(self.stop_button)
@@ -723,16 +838,27 @@ class MusicRoundsApp(QMainWindow):
         """Create the output panel"""
         panel = QWidget()
         layout = QVBoxLayout(panel)
-        layout.setSpacing(8)
-        layout.setContentsMargins(5, 5, 5, 5)
+        if sys.platform == "win32":
+            layout.setSpacing(12)  # More spacing for Windows
+            layout.setContentsMargins(8, 8, 8, 8)  # More margins for Windows
+        else:
+            layout.setSpacing(8)
+            layout.setContentsMargins(5, 5, 5, 5)
         
         # Output group
         output_group = QGroupBox("Output")
-        output_group.setStyleSheet(f"QGroupBox {{ font-size: {self.current_font_size}pt; font-weight: bold; margin-top: 8px; }}")
-        output_group.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
-        output_layout = QVBoxLayout(output_group)
-        output_layout.setSpacing(6)
-        output_layout.setContentsMargins(8, 8, 8, 8)
+        if sys.platform == "win32":
+            output_group.setStyleSheet(f"QGroupBox {{ font-size: {self.current_font_size}pt; font-weight: bold; margin-top: 12px; padding-top: 8px; }}")
+            output_group.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+            output_layout = QVBoxLayout(output_group)
+            output_layout.setSpacing(8)
+            output_layout.setContentsMargins(12, 12, 12, 12)
+        else:
+            output_group.setStyleSheet(f"QGroupBox {{ font-size: {self.current_font_size}pt; font-weight: bold; margin-top: 8px; }}")
+            output_group.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+            output_layout = QVBoxLayout(output_group)
+            output_layout.setSpacing(6)
+            output_layout.setContentsMargins(8, 8, 8, 8)
         
         # Output directory
         dir_layout = QHBoxLayout()
@@ -747,7 +873,10 @@ class MusicRoundsApp(QMainWindow):
             default_dir = str(Path.home() / "Desktop")
             
         self.output_dir_label = QLabel(default_dir)
-        self.output_dir_label.setStyleSheet("color: #aaa; font-style: italic; padding: 2px;")
+        if sys.platform == "win32":
+            self.output_dir_label.setStyleSheet("color: #aaa; font-style: italic; padding: 4px; line-height: 1.2;")
+        else:
+            self.output_dir_label.setStyleSheet("color: #aaa; font-style: italic; padding: 2px;")
         dir_layout.addWidget(self.output_dir_label)
         
         self.browse_button = QPushButton("Browse...")
@@ -775,9 +904,16 @@ class MusicRoundsApp(QMainWindow):
         
         # Memory usage
         memory_group = QGroupBox("System Info")
-        memory_layout = QVBoxLayout(memory_group)
+        if sys.platform == "win32":
+            memory_group.setStyleSheet(f"QGroupBox {{ font-size: {self.current_font_size}pt; font-weight: bold; margin-top: 12px; padding-top: 8px; }}")
+            memory_layout = QVBoxLayout(memory_group)
+            memory_layout.setContentsMargins(12, 12, 12, 12)
+        else:
+            memory_layout = QVBoxLayout(memory_group)
         
         self.memory_label = QLabel("Memory Usage: --")
+        if sys.platform == "win32":
+            self.memory_label.setStyleSheet("padding: 4px;")
         memory_layout.addWidget(self.memory_label)
         
         # Update memory usage periodically
@@ -869,13 +1005,21 @@ class MusicRoundsApp(QMainWindow):
         # Create link widget
         link_widget = QWidget()
         link_layout = QHBoxLayout(link_widget)
-        link_layout.setContentsMargins(8, 4, 8, 4)
-        link_layout.setSpacing(8)
+        if sys.platform == "win32":
+            link_layout.setContentsMargins(10, 6, 10, 6)  # More padding for Windows
+            link_layout.setSpacing(10)  # More spacing for Windows
+        else:
+            link_layout.setContentsMargins(8, 4, 8, 4)
+            link_layout.setSpacing(8)
         
         # Number label
         number_label = QLabel(f"{len(self.link_widgets) + 1}.")
-        number_label.setMinimumWidth(25)
-        number_label.setMaximumWidth(25)
+        if sys.platform == "win32":
+            number_label.setMinimumWidth(30)  # Wider for Windows
+            number_label.setMaximumWidth(30)
+        else:
+            number_label.setMinimumWidth(25)
+            number_label.setMaximumWidth(25)
         number_label.setStyleSheet(f"font-weight: bold; color: #888; font-size: {self.current_font_size}pt;")
         link_layout.addWidget(number_label)
         
@@ -884,7 +1028,10 @@ class MusicRoundsApp(QMainWindow):
         seconds = start_time % 60
         info_label = QLabel(f"{url} | {minutes:02d}:{seconds:02d}")
         info_label.setWordWrap(True)
-        info_label.setStyleSheet(f"color: #e0e0e0; font-size: {self.current_font_size}pt; background: transparent; border: none;")
+        if sys.platform == "win32":
+            info_label.setStyleSheet(f"color: #e0e0e0; font-size: {self.current_font_size}pt; background: transparent; border: none; padding: 2px; line-height: 1.2;")
+        else:
+            info_label.setStyleSheet(f"color: #e0e0e0; font-size: {self.current_font_size}pt; background: transparent; border: none;")
         link_layout.addWidget(info_label, 1)  # Stretch factor 1
         
         # Duration spinbox
@@ -893,73 +1040,142 @@ class MusicRoundsApp(QMainWindow):
         duration_spinbox.setMaximum(20)
         duration_spinbox.setValue(duration)
         duration_spinbox.setSuffix("s")
-        duration_spinbox.setFixedWidth(45)
-        duration_spinbox.setFixedHeight(20)
-        duration_spinbox.setStyleSheet(f"""
-            QSpinBox {{
-                border: 1px solid #555;
-                border-radius: 2px;
-                padding: 1px 3px;
-                background: #2a2a2a;
-                color: #e0e0e0;
-                font-size: {self.current_font_size}pt;
-                selection-background-color: #0078d4;
-            }}
-            QSpinBox::up-button, QSpinBox::down-button {{
-                width: 12px;
-                border: none;
-                background: #3a3a3a;
-            }}
-            QSpinBox::up-button:hover, QSpinBox::down-button:hover {{
-                background: #4a4a4a;
-            }}
-            QSpinBox::up-arrow {{
-                width: 6px;
-                height: 6px;
-                image: none;
-                border-left: 2px solid #888;
-                border-bottom: 2px solid #888;
-                transform: rotate(45deg);
-            }}
-            QSpinBox::down-arrow {{
-                width: 6px;
-                height: 6px;
-                image: none;
-                border-left: 2px solid #888;
-                border-top: 2px solid #888;
-                transform: rotate(45deg);
-            }}
-        """)
+        if sys.platform == "win32":
+            duration_spinbox.setFixedWidth(60)  # Wider for Windows
+            duration_spinbox.setFixedHeight(25)  # Taller for Windows
+        else:
+            duration_spinbox.setFixedWidth(45)
+            duration_spinbox.setFixedHeight(20)
+        if sys.platform == "win32":
+            duration_spinbox.setStyleSheet(f"""
+                QSpinBox {{
+                    border: 1px solid #555;
+                    border-radius: 3px;
+                    padding: 2px 4px;
+                    background: #2a2a2a;
+                    color: #e0e0e0;
+                    font-size: {self.current_font_size}pt;
+                    selection-background-color: #0078d4;
+                }}
+                QSpinBox::up-button, QSpinBox::down-button {{
+                    width: 14px;
+                    border: none;
+                    background: #3a3a3a;
+                }}
+                QSpinBox::up-button:hover, QSpinBox::down-button:hover {{
+                    background: #4a4a4a;
+                }}
+                QSpinBox::up-arrow {{
+                    width: 6px;
+                    height: 6px;
+                    image: none;
+                    border-left: 2px solid #888;
+                    border-bottom: 2px solid #888;
+                    transform: rotate(45deg);
+                }}
+                QSpinBox::down-arrow {{
+                    width: 6px;
+                    height: 6px;
+                    image: none;
+                    border-left: 2px solid #888;
+                    border-top: 2px solid #888;
+                    transform: rotate(45deg);
+                }}
+            """)
+        else:
+            duration_spinbox.setStyleSheet(f"""
+                QSpinBox {{
+                    border: 1px solid #555;
+                    border-radius: 2px;
+                    padding: 1px 3px;
+                    background: #2a2a2a;
+                    color: #e0e0e0;
+                    font-size: {self.current_font_size}pt;
+                    selection-background-color: #0078d4;
+                }}
+                QSpinBox::up-button, QSpinBox::down-button {{
+                    width: 12px;
+                    border: none;
+                    background: #3a3a3a;
+                }}
+                QSpinBox::up-button:hover, QSpinBox::down-button:hover {{
+                    background: #4a4a4a;
+                }}
+                QSpinBox::up-arrow {{
+                    width: 6px;
+                    height: 6px;
+                    image: none;
+                    border-left: 2px solid #888;
+                    border-bottom: 2px solid #888;
+                    transform: rotate(45deg);
+                }}
+                QSpinBox::down-arrow {{
+                    width: 6px;
+                    height: 6px;
+                    image: none;
+                    border-left: 2px solid #888;
+                    border-top: 2px solid #888;
+                    transform: rotate(45deg);
+                }}
+            """)
         link_layout.addWidget(duration_spinbox)
         
         # Remove button
         remove_button = QPushButton("×")
-        remove_button.setFixedSize(16, 16)
-        remove_button.setStyleSheet(f"""
-            QPushButton {{
-                background-color: #dc3545;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                font-weight: bold;
-                font-size: {self.current_font_size}pt;
-            }}
-            QPushButton:hover {{
-                background-color: #c82333;
-            }}
-        """)
+        if sys.platform == "win32":
+            remove_button.setFixedSize(20, 20)  # Larger for Windows
+        else:
+            remove_button.setFixedSize(16, 16)
+        if sys.platform == "win32":
+            remove_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #dc3545;
+                    color: white;
+                    border: none;
+                    border-radius: 10px;
+                    font-weight: bold;
+                    font-size: {self.current_font_size}pt;
+                }}
+                QPushButton:hover {{
+                    background-color: #c82333;
+                }}
+            """)
+        else:
+            remove_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #dc3545;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    font-weight: bold;
+                    font-size: {self.current_font_size}pt;
+                }}
+                QPushButton:hover {{
+                    background-color: #c82333;
+                }}
+            """)
         remove_button.clicked.connect(lambda: self.remove_link_widget(link_widget))
         link_layout.addWidget(remove_button)
         
         # Style the link widget itself
-        link_widget.setStyleSheet("""
-            QWidget {
-                background: #252525;
-                border: 1px solid #333;
-                border-radius: 3px;
-                margin: 1px;
-            }
-        """)
+        if sys.platform == "win32":
+            link_widget.setStyleSheet("""
+                QWidget {
+                    background: #252525;
+                    border: 1px solid #333;
+                    border-radius: 4px;
+                    margin: 2px;
+                }
+            """)
+        else:
+            link_widget.setStyleSheet("""
+                QWidget {
+                    background: #252525;
+                    border: 1px solid #333;
+                    border-radius: 3px;
+                    margin: 1px;
+                }
+            """)
         
         # Store the widget data
         link_data = {
@@ -1155,8 +1371,8 @@ class MusicRoundsApp(QMainWindow):
         # Update the instance variable
         self.current_font_size = new_size
         
-        # Update the global stylesheet with the new font size
-        stylesheet = f"""
+        # Base stylesheet with font size
+        base_stylesheet = f"""
             QMainWindow {{
                 background-color: #2b2b2b;
                 color: #e6e6e6;
@@ -1241,6 +1457,60 @@ class MusicRoundsApp(QMainWindow):
             }}
         """
         
+        # Add Windows-specific adjustments to the stylesheet
+        if sys.platform == "win32":
+            windows_adjustments = f"""
+                QGroupBox::title {{
+                    subcontrol-origin: margin;
+                    left: 10px;
+                    padding: 0 8px 0 8px;
+                    font-family: 'Segoe UI', 'Arial', sans-serif;
+                    font-size: {new_size}pt;
+                    margin-top: 4px;
+                }}
+                QLabel {{
+                    color: #e6e6e6;
+                    font-family: 'Segoe UI', 'Arial', sans-serif;
+                    font-size: {new_size}pt;
+                    padding: 2px 0px;
+                    line-height: 1.4;
+                }}
+                QPushButton {{
+                    background-color: #0078d4;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                    font-weight: bold;
+                    font-family: 'Segoe UI', 'Arial', sans-serif;
+                    font-size: {new_size}pt;
+                    min-height: 20px;
+                }}
+                QSpinBox {{
+                    background-color: #3b3b3b;
+                    border: 1px solid #555;
+                    border-radius: 3px;
+                    padding: 6px 8px;
+                    color: #e6e6e6;
+                    font-family: 'Segoe UI', 'Arial', sans-serif;
+                    font-size: {new_size}pt;
+                    min-height: 25px;
+                }}
+                QLineEdit, QTextEdit {{
+                    background-color: #3b3b3b;
+                    border: 1px solid #555;
+                    border-radius: 3px;
+                    padding: 6px 8px;
+                    color: #e6e6e6;
+                    font-family: 'Segoe UI', 'Arial', sans-serif;
+                    font-size: {new_size}pt;
+                    min-height: 25px;
+                }}
+            """
+            stylesheet = base_stylesheet + windows_adjustments
+        else:
+            stylesheet = base_stylesheet
+        
         # Apply the updated global stylesheet
         app.setStyleSheet(stylesheet)
         
@@ -1252,30 +1522,55 @@ class MusicRoundsApp(QMainWindow):
         
     def update_widget_font_sizes(self, new_size: int):
         """Update font sizes for all widgets with custom stylesheets"""
-        # Update font size slider
-        self.font_size_slider.setStyleSheet(f"""
-            QSpinBox {{
-                border: 1px solid #555;
-                border-radius: 3px;
-                padding: 3px 6px;
-                background: #3b3b3b;
-                color: #e6e6e6;
-                font-size: {new_size}pt;
-                selection-background-color: #0078d4;
-            }}
-            QSpinBox::up-button, QSpinBox::down-button {{
-                width: 16px;
-                border: none;
-                background: #4a4a4a;
-            }}
-            QSpinBox::up-button:hover, QSpinBox::down-button:hover {{
-                background: #5a5a5a;
-            }}
-        """)
+        # Update font size slider with Windows-specific adjustments
+        if sys.platform == "win32":
+            self.font_size_slider.setStyleSheet(f"""
+                QSpinBox {{
+                    border: 1px solid #555;
+                    border-radius: 3px;
+                    padding: 6px 8px;
+                    background: #3b3b3b;
+                    color: #e6e6e6;
+                    font-size: {new_size}pt;
+                    selection-background-color: #0078d4;
+                    min-height: 25px;
+                }}
+                QSpinBox::up-button, QSpinBox::down-button {{
+                    width: 20px;
+                    border: none;
+                    background: #4a4a4a;
+                }}
+                QSpinBox::up-button:hover, QSpinBox::down-button:hover {{
+                    background: #5a5a5a;
+                }}
+            """)
+        else:
+            self.font_size_slider.setStyleSheet(f"""
+                QSpinBox {{
+                    border: 1px solid #555;
+                    border-radius: 3px;
+                    padding: 3px 6px;
+                    background: #3b3b3b;
+                    color: #e6e6e6;
+                    font-size: {new_size}pt;
+                    selection-background-color: #0078d4;
+                }}
+                QSpinBox::up-button, QSpinBox::down-button {{
+                    width: 16px;
+                    border: none;
+                    background: #4a4a4a;
+                }}
+                QSpinBox::up-button:hover, QSpinBox::down-button:hover {{
+                    background: #5a5a5a;
+                }}
+            """)
         
-        # Update group boxes
+        # Update group boxes with Windows-specific adjustments
         for group in self.findChildren(QGroupBox):
-            group.setStyleSheet(f"QGroupBox {{ font-size: {new_size}pt; font-weight: bold; margin-top: 8px; }}")
+            if sys.platform == "win32":
+                group.setStyleSheet(f"QGroupBox {{ font-size: {new_size}pt; font-weight: bold; margin-top: 12px; padding-top: 8px; }}")
+            else:
+                group.setStyleSheet(f"QGroupBox {{ font-size: {new_size}pt; font-weight: bold; margin-top: 8px; }}")
         
         # Update help labels and placeholders
         for label in self.findChildren(QLabel):
@@ -1297,44 +1592,85 @@ class MusicRoundsApp(QMainWindow):
             }}
         """)
         
-        # Update process and stop buttons
-        self.process_button.setStyleSheet(f"""
-            QPushButton {{
-                background-color: #28a745;
-                color: white;
-                border: none;
-                padding: 8px;
-                font-size: {new_size}pt;
-                font-weight: bold;
-                border-radius: 4px;
-            }}
-            QPushButton:hover {{
-                background-color: #218838;
-            }}
-            QPushButton:disabled {{
-                background-color: #555;
-                color: #888;
-            }}
-        """)
-        
-        self.stop_button.setStyleSheet(f"""
-            QPushButton {{
-                background-color: #dc3545;
-                color: white;
-                border: none;
-                padding: 8px;
-                font-size: {new_size}pt;
-                font-weight: bold;
-                border-radius: 4px;
-            }}
-            QPushButton:hover {{
-                background-color: #c82333;
-            }}
-            QPushButton:disabled {{
-                background-color: #555;
-                color: #888;
-            }}
-        """)
+        # Update process and stop buttons with Windows-specific adjustments
+        if sys.platform == "win32":
+            self.process_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #28a745;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    font-size: {new_size}pt;
+                    font-weight: bold;
+                    border-radius: 4px;
+                    min-height: 20px;
+                }}
+                QPushButton:hover {{
+                    background-color: #218838;
+                }}
+                QPushButton:disabled {{
+                    background-color: #555;
+                    color: #888;
+                }}
+            """)
+            
+            self.stop_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #dc3545;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    font-size: {new_size}pt;
+                    font-weight: bold;
+                    border-radius: 4px;
+                    min-height: 20px;
+                }}
+                QPushButton:hover {{
+                    background-color: #c82333;
+                }}
+                QPushButton:disabled {{
+                    background-color: #555;
+                    color: #888;
+                }}
+            """)
+        else:
+            self.process_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #28a745;
+                    color: white;
+                    border: none;
+                    padding: 8px;
+                    font-size: {new_size}pt;
+                    font-weight: bold;
+                    border-radius: 4px;
+                }}
+                QPushButton:hover {{
+                    background-color: #218838;
+                }}
+                QPushButton:disabled {{
+                    background-color: #555;
+                    color: #888;
+                }}
+            """)
+            
+            self.stop_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: #dc3545;
+                    color: white;
+                    border: none;
+                    padding: 8px;
+                    font-size: {new_size}pt;
+                    font-weight: bold;
+                    border-radius: 4px;
+                }}
+                QPushButton:hover {{
+                    background-color: #c82333;
+                }}
+                QPushButton:disabled {{
+                    background-color: #555;
+                    color: #888;
+                }}
+            """)
         
         # Update links scroll area
         self.links_scroll.setStyleSheet(f"""
@@ -1422,16 +1758,18 @@ def main():
     app.setStyle('Fusion')
     
     # Apply dark mode styling with responsive fonts for Windows
-    app.setStyleSheet("""
+    base_stylesheet = """
         QMainWindow {
             background-color: #2b2b2b;
             color: #e6e6e6;
             font-family: 'Segoe UI', 'Arial', sans-serif;
+            font-size: 11pt;
         }
         QWidget {
             background-color: #2b2b2b;
             color: #e6e6e6;
             font-family: 'Segoe UI', 'Arial', sans-serif;
+            font-size: 11pt;
         }
         QGroupBox {
             border: 1px solid #555;
@@ -1439,12 +1777,14 @@ def main():
             margin-top: 1ex;
             font-weight: bold;
             font-family: 'Segoe UI', 'Arial', sans-serif;
+            font-size: 11pt;
         }
         QGroupBox::title {
             subcontrol-origin: margin;
             left: 10px;
             padding: 0 5px 0 5px;
             font-family: 'Segoe UI', 'Arial', sans-serif;
+            font-size: 11pt;
         }
         QLineEdit, QTextEdit, QSpinBox {
             background-color: #3b3b3b;
@@ -1453,6 +1793,7 @@ def main():
             padding: 5px;
             color: #e6e6e6;
             font-family: 'Segoe UI', 'Arial', sans-serif;
+            font-size: 11pt;
         }
         QLineEdit:focus, QTextEdit:focus, QSpinBox:focus {
             border: 1px solid #0078d4;
@@ -1465,6 +1806,7 @@ def main():
             border-radius: 4px;
             font-weight: bold;
             font-family: 'Segoe UI', 'Arial', sans-serif;
+            font-size: 11pt;
         }
         QPushButton:hover {
             background-color: #106ebe;
@@ -1479,6 +1821,7 @@ def main():
         QLabel {
             color: #e6e6e6;
             font-family: 'Segoe UI', 'Arial', sans-serif;
+            font-size: 11pt;
         }
         QProgressBar {
             border: 1px solid #555;
@@ -1486,6 +1829,7 @@ def main():
             text-align: center;
             background-color: #3b3b3b;
             font-family: 'Segoe UI', 'Arial', sans-serif;
+            font-size: 11pt;
         }
         QProgressBar::chunk {
             background-color: #0078d4;
@@ -1495,8 +1839,63 @@ def main():
             background-color: #2b2b2b;
             color: #e6e6e6;
             font-family: 'Segoe UI', 'Arial', sans-serif;
+            font-size: 11pt;
         }
-    """)
+    """
+    
+    # Add Windows-specific adjustments to the initial stylesheet
+    if sys.platform == "win32":
+        windows_adjustments = """
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 10px;
+                padding: 0 8px 0 8px;
+                font-family: 'Segoe UI', 'Arial', sans-serif;
+                font-size: 11pt;
+                margin-top: 4px;
+            }
+            QLabel {
+                color: #e6e6e6;
+                font-family: 'Segoe UI', 'Arial', sans-serif;
+                font-size: 11pt;
+                padding: 2px 0px;
+                line-height: 1.4;
+            }
+            QPushButton {
+                background-color: #0078d4;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                font-weight: bold;
+                font-family: 'Segoe UI', 'Arial', sans-serif;
+                font-size: 11pt;
+                min-height: 20px;
+            }
+            QSpinBox {
+                background-color: #3b3b3b;
+                border: 1px solid #555;
+                border-radius: 3px;
+                padding: 6px 8px;
+                color: #e6e6e6;
+                font-family: 'Segoe UI', 'Arial', sans-serif;
+                font-size: 11pt;
+                min-height: 25px;
+            }
+            QLineEdit, QTextEdit {
+                background-color: #3b3b3b;
+                border: 1px solid #555;
+                border-radius: 3px;
+                padding: 6px 8px;
+                color: #e6e6e6;
+                font-family: 'Segoe UI', 'Arial', sans-serif;
+                font-size: 11pt;
+                min-height: 25px;
+            }
+        """
+        app.setStyleSheet(base_stylesheet + windows_adjustments)
+    else:
+        app.setStyleSheet(base_stylesheet)
     
     # Create and show main window
     window = MusicRoundsApp()
