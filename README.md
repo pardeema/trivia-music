@@ -45,9 +45,9 @@ Download the appropriate executable for your system:
 - **Size**: 124MB
 
 #### **macOS (Latest)**
-- **Download**: [MusicRoundsCreator_macOS_20250812_111433.zip](https://dev.107w.io/MusicRoundsCreator_macOS_20250812_111433.zip)
-- **MD5 Hash**: `1812C3C6310E25F387ABD3DB65107327`
-- **Size**: 58MB
+- **Download**: [MusicRoundsCreator_macOS_20250812_222817.zip](https://dev.107w.io/MusicRoundsCreator_macOS_20250812_222817.zip)
+- **MD5 Hash**: `c9b80a514943974222f7ecd144d53f24`
+- **Size**: 60MB
 
 **Installation Steps:**
 1. Download the ZIP file for your platform using the link above
