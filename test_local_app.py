@@ -25,11 +25,13 @@ def test_download_worker():
         {
             'url': 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',  # Rick Astley
             'start_time': 30,  # Start at 30 seconds
+            'duration': 15,  # 15 second clip
             'title': 'Rick Astley - Never Gonna Give You Up'
         },
         {
             'url': 'https://www.youtube.com/watch?v=9bZkp7q19f0',  # PSY
             'start_time': 45,  # Start at 45 seconds
+            'duration': 15,  # 15 second clip
             'title': 'PSY - GANGNAM STYLE'
         }
     ]
@@ -44,14 +46,18 @@ def test_download_worker():
     temp_dir = Path(tempfile.mkdtemp(prefix="test_"))
     try:
         # Test download
-        audio_file = worker.download_youtube_audio(
+        result = worker.download_youtube_audio(
             test_links[0]['url'], 
             temp_dir, 
-            0
+            0,
+            test_links[0]['start_time'],
+            test_links[0]['duration']
         )
         
-        if audio_file and os.path.exists(audio_file):
-            print(f"✅ Download successful: {audio_file}")
+        if result:
+            audio_file, video_title = result
+            if os.path.exists(audio_file):
+                print(f"✅ Download successful: {audio_file}")
             
             # Test audio clipping
             output_dir = temp_dir / "output"
@@ -74,16 +80,19 @@ def test_download_worker():
                     'index': 0
                 }]
                 
-                zip_path = worker.create_zip_file(processed_files)
-                if os.path.exists(zip_path):
-                    print(f"✅ ZIP creation successful: {zip_path}")
+                output_path = worker.create_output_file(processed_files)
+                if os.path.exists(output_path):
+                    print(f"✅ Output creation successful: {output_path}")
                     
-                    # Verify ZIP contents
-                    with zipfile.ZipFile(zip_path, 'r') as zipf:
-                        files = zipf.namelist()
-                        print(f"✅ ZIP contains {len(files)} files: {files}")
+                    # Verify output contents
+                    if output_path.endswith('.zip'):
+                        with zipfile.ZipFile(output_path, 'r') as zipf:
+                            files = zipf.namelist()
+                            print(f"✅ ZIP contains {len(files)} files: {files}")
+                    else:
+                        print(f"✅ Single file created: {output_path}")
                 else:
-                    print("❌ ZIP creation failed")
+                    print("❌ Output creation failed")
             else:
                 print("❌ Audio clipping failed")
         else:

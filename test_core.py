@@ -155,28 +155,47 @@ class CoreDownloader:
             print(f"Pydub processing failed: {str(e)}")
             return None
             
-    def create_zip_file(self, processed_files: List[Dict]) -> str:
-        """Create a ZIP file containing all processed audio clips"""
+    def create_output_file(self, processed_files: List[Dict]) -> str:
+        """Create output file(s) - ZIP for multiple files, single file for one file"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        zip_filename = f"music_rounds_{timestamp}.zip"
         
         # Get user's desktop
         output_dir = Path.home() / "Desktop"
-        zip_path = output_dir / zip_filename
         
-        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            for file_info in processed_files:
-                file_path = file_info['file']
-                title = file_info['title']
-                index = file_info['index']
-                
-                # Create a clean filename
-                clean_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
-                arcname = f"{index+1:02d}_{clean_title[:50]}.mp3"
-                
-                zipf.write(file_path, arcname)
-                
-        return str(zip_path)
+        if len(processed_files) == 1:
+            # Single file - just copy it with a clean name
+            file_info = processed_files[0]
+            file_path = file_info['file']
+            title = file_info['title']
+            
+            # Create a clean filename
+            clean_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
+            output_filename = f"{clean_title[:50]}.mp3"
+            output_path = output_dir / output_filename
+            
+            # Copy the file
+            import shutil
+            shutil.copy2(file_path, output_path)
+            
+            return str(output_path)
+        else:
+            # Multiple files - create ZIP
+            zip_filename = f"music_rounds_{timestamp}.zip"
+            zip_path = output_dir / zip_filename
+            
+            with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                for file_info in processed_files:
+                    file_path = file_info['file']
+                    title = file_info['title']
+                    index = file_info['index']
+                    
+                    # Create a clean filename
+                    clean_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
+                    arcname = f"{index+1:02d}_{clean_title[:50]}.mp3"
+                    
+                    zipf.write(file_path, arcname)
+                    
+            return str(zip_path)
 
 def test_dependencies():
     """Test that all required dependencies are available"""
@@ -270,19 +289,22 @@ def test_core_functionality():
                     'index': 0
                 }]
                 
-                print("Testing ZIP creation...")
-                zip_path = downloader.create_zip_file(processed_files)
-                if os.path.exists(zip_path):
-                    print(f"✅ ZIP creation successful: {zip_path}")
+                print("Testing output creation...")
+                output_path = downloader.create_output_file(processed_files)
+                if os.path.exists(output_path):
+                    print(f"✅ Output creation successful: {output_path}")
                     
-                    # Verify ZIP contents
-                    with zipfile.ZipFile(zip_path, 'r') as zipf:
-                        files = zipf.namelist()
-                        print(f"✅ ZIP contains {len(files)} files: {files}")
+                    # Verify output contents
+                    if output_path.endswith('.zip'):
+                        with zipfile.ZipFile(output_path, 'r') as zipf:
+                            files = zipf.namelist()
+                            print(f"✅ ZIP contains {len(files)} files: {files}")
+                    else:
+                        print(f"✅ Single file created: {output_path}")
                         
                     return True
                 else:
-                    print("❌ ZIP creation failed")
+                    print("❌ Output creation failed")
             else:
                 print("❌ Audio clipping failed")
         else:

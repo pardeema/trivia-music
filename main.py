@@ -199,11 +199,11 @@ class DownloadWorker(QThread):
                     time.sleep(2)
                     
             if processed_files and self.is_running:
-                # Create ZIP file
-                self.progress.emit(f"Creating ZIP file with {len(processed_files)} processed files...")
-                zip_path = self.create_zip_file(processed_files)
-                self.progress.emit(f"ZIP file created: {zip_path}")
-                self.finished.emit(str(zip_path))
+                # Create output file(s)
+                self.progress.emit(f"Creating output with {len(processed_files)} processed files...")
+                output_path = self.create_output_file(processed_files)
+                self.progress.emit(f"Output created: {output_path}")
+                self.finished.emit(str(output_path))
             else:
                 self.error.emit("No files were successfully processed.")
                 
@@ -388,10 +388,9 @@ class DownloadWorker(QThread):
             self.progress.emit(f"Pydub processing failed: {str(e)}")
             return None
             
-    def create_zip_file(self, processed_files: List[Dict]) -> str:
-        """Create a ZIP file containing all processed audio clips"""
+    def create_output_file(self, processed_files: List[Dict]) -> str:
+        """Create output file(s) - ZIP for multiple files, single file for one file"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        zip_filename = f"music_rounds_{timestamp}.zip"
         
         # Use the selected output directory from the UI
         if self.output_dir is None:
@@ -405,28 +404,53 @@ class DownloadWorker(QThread):
         else:
             output_dir = Path(self.output_dir)
             
-        zip_path = output_dir / zip_filename
-        self.progress.emit(f"Creating ZIP file: {zip_path}")
         self.progress.emit(f"Output directory: {output_dir}")
         self.progress.emit(f"Files to include: {len(processed_files)}")
         
-        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-            for file_info in processed_files:
-                file_path = file_info['file']
-                title = file_info['title']
-                index = file_info['index']
-                
-                # Create a clean filename with better formatting
-                clean_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
-                # Replace spaces with underscores and limit length
-                clean_title = clean_title.replace(' ', '_')[:40]
-                arcname = f"{index+1:02d}-{clean_title}.mp3"
-                
-                self.progress.emit(f"Adding to ZIP: {file_path} -> {arcname}")
-                zipf.write(file_path, arcname)
-                
-        self.progress.emit(f"ZIP file completed: {zip_path}")
-        return str(zip_path)
+        if len(processed_files) == 1:
+            # Single file - just copy it with a clean name
+            file_info = processed_files[0]
+            file_path = file_info['file']
+            title = file_info['title']
+            
+            # Create a clean filename with better formatting
+            clean_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
+            # Replace spaces with underscores and limit length
+            clean_title = clean_title.replace(' ', '_')[:40]
+            output_filename = f"{clean_title}.mp3"
+            output_path = output_dir / output_filename
+            
+            self.progress.emit(f"Copying single file: {file_path} -> {output_path}")
+            
+            # Copy the file
+            import shutil
+            shutil.copy2(file_path, output_path)
+            
+            self.progress.emit(f"Single file completed: {output_path}")
+            return str(output_path)
+        else:
+            # Multiple files - create ZIP
+            zip_filename = f"music_rounds_{timestamp}.zip"
+            zip_path = output_dir / zip_filename
+            self.progress.emit(f"Creating ZIP file: {zip_path}")
+            
+            with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                for file_info in processed_files:
+                    file_path = file_info['file']
+                    title = file_info['title']
+                    index = file_info['index']
+                    
+                    # Create a clean filename with better formatting
+                    clean_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
+                    # Replace spaces with underscores and limit length
+                    clean_title = clean_title.replace(' ', '_')[:40]
+                    arcname = f"{index+1:02d}-{clean_title}.mp3"
+                    
+                    self.progress.emit(f"Adding to ZIP: {file_path} -> {arcname}")
+                    zipf.write(file_path, arcname)
+                    
+            self.progress.emit(f"ZIP file completed: {zip_path}")
+            return str(zip_path)
 
 
 class MusicRoundsApp(QMainWindow):
